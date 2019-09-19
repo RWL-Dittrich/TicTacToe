@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TicTacToe</string>
+    <string name="main_button_settings">Settings</string>
+    <string name="main_button_start">Start game!</string>
+    <string name="settings_textview_title">Settings</string>
+    <string name="settings_button_save">Save</string>
 </resources>

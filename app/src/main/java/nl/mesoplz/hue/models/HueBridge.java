@@ -1,8 +1,11 @@
 package nl.mesoplz.hue.models;
 
+import android.util.Log;
+
 import nl.mesoplz.hue.compare.LightComparator;
 import nl.mesoplz.hue.exceptions.BridgeNotFoundException;
 import nl.mesoplz.hue.exceptions.HueException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,74 +51,92 @@ public class HueBridge {
 
     /**
      * Makes a PUT command to the hue bridge
+     *
      * @param jsonCommand this is the message body that should be sent
-     * @param subURL this is the subURL that the command should use eg. /lights/1
+     * @param subURL      this is the subURL that the command should use eg. /lights/1
      * @throws IOException throws IOException when something went wrong with the connection
      */
-    void putCommand(String jsonCommand, String subURL) throws IOException {
-        URL url = new URL("http://" + ip + "/api/" + user + subURL);
-//        System.out.println(url.toString());
-        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-        httpCon.setDoOutput(true);
-        httpCon.setRequestMethod("PUT");
-        OutputStream os = httpCon.getOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-        osw.write(jsonCommand);
-        osw.flush();
-        osw.close();
-        os.close();
-//        System.out.println(jsonCommand);
-        httpCon.connect();
+    void putCommand(final String jsonCommand, final String subURL) throws IOException {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://" + ip + "/api/" + user + subURL);
+//                    System.out.println(url.toString());
+                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                    httpCon.setDoOutput(true);
+                    httpCon.setRequestMethod("PUT");
+                    OutputStream os = httpCon.getOutputStream();
+                    OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+                    osw.write(jsonCommand);
+                    osw.flush();
+                    osw.close();
+                    os.close();
+//                    System.out.println(jsonCommand);
+                    httpCon.connect();
 
-        //get result
-        String result = readResult(httpCon);
-//        System.out.println(result);
-        httpCon.disconnect();
+                    //get result
+                    String result = readResult(httpCon);
+//                    System.out.println(result);
+                    httpCon.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
     /**
      * Discovers lights in this Hue
-     * @throws HueException when something goes wrong
+     *
      */
-    private void discoverLights() throws HueException {
+    private void discoverLights() {
         //Create the Http connection
-        try {
-            URL url = new URL("http://" + ip + "/api/" + user + "/lights");
-            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setDoOutput(true);
-            httpCon.setRequestMethod("GET");
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://" + ip + "/api/" + user + "/lights");
+                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                    httpCon.setDoOutput(false);
+                    httpCon.setRequestMethod("GET");
 
-            //get result
-            String result = readResult(httpCon);
-            try {
-                JSONObject object = new JSONObject(result);
+                    //get result
+                    String result = readResult(httpCon);
+                    try {
+                        JSONObject object = new JSONObject(result);
 
-                //Start reading the lights
-                Iterator<String> keys = object.keys();
-                while(keys.hasNext()) {
-                    String key = keys.next();
-                    if (object.get(key) instanceof JSONObject) {
-                        JSONObject lightObject = (JSONObject) object.get(key);
-                        lights.add(new HueLight(Integer.parseInt(key), transitionTime, this, lightObject.getString("name")));
+                        //Start reading the lights
+                        Iterator<String> keys = object.keys();
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            if (object.get(key) instanceof JSONObject) {
+                                JSONObject lightObject = (JSONObject) object.get(key);
+                                lights.add(new HueLight(Integer.parseInt(key), transitionTime, HueBridge.this, lightObject.getString("name")));
+                            }
+                        }
+
+                        //Sort the lights by name
+                        Collections.sort(lights, new LightComparator());
+                        Log.i("HueBridge", "Created bridge with lights: " + lights);
+                    } catch (JSONException e) {
+                        throw new HueException("Lights JSON could not be read!");
                     }
+                    httpCon.disconnect();
+                } catch (IOException | HueException e) {
+                    e.printStackTrace();
                 }
-
-                //Sort the lights by name
-                //lights.sort(new LightComparator());
-            } catch (JSONException e) {
-                throw new HueException("Lights JSON could not be read!");
             }
-            httpCon.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-            //throw new BridgeNotFoundException("Request to bridge " + ip + " could not be made!");
-        }
+        });
+        thread.start();
 
     }
 
 
     /**
      * Reads a result from a HttpUrlConnection
+     *
      * @param httpCon the opened HttpURLConnection
      * @return the result string
      * @throws IOException when reading went wrong
@@ -125,7 +146,7 @@ public class HueBridge {
         BufferedInputStream bis = new BufferedInputStream(httpCon.getInputStream());
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         int result2 = bis.read();
-        while(result2 != -1) {
+        while (result2 != -1) {
             buf.write((byte) result2);
             result2 = bis.read();
         }
