@@ -1,14 +1,18 @@
 package com.saxion.robindittrich.tictactoe.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
 import com.saxion.robindittrich.tictactoe.R;
+import com.saxion.robindittrich.tictactoe.adapters.LampListAdapter;
 import com.saxion.robindittrich.tictactoe.views.InputView;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +25,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private InputView ipInput;
     private InputView userInput;
+    private RecyclerView recyclerView;
 
+    private LampListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,34 @@ public class SettingsActivity extends AppCompatActivity {
         //Set the values of the current Hue creds
         ipInput.setmEditText(bridge.getIp());
         userInput.setmEditText(bridge.getUser());
+
+        recyclerView = findViewById(R.id.rvLightsView);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new LampListAdapter(this);
+        adapter.setClickListener(new LampListAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, final int position) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            bridge.getLights().get(position).setBri(0);
+                            Thread.sleep(500);
+                            bridge.getLights().get(position).setBri(254);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                new Thread(runnable).start();
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
+
     }
 
     public void saveSettings(View view) {
@@ -52,12 +86,10 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         try {
-            bridge = new HueBridge(ip, user);
+            bridge = new HueBridge(ip, user, this);
         } catch (HueException e) {
             e.printStackTrace();
         }
-
-        //TODO: Save credentials to android storage
 
         SharedPreferences pref = getApplication().getSharedPreferences("Settings", 0);
         SharedPreferences.Editor editor = pref.edit();

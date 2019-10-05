@@ -1,6 +1,20 @@
 package nl.mesoplz.hue.models;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import nl.mesoplz.hue.compare.LightComparator;
 import nl.mesoplz.hue.exceptions.BridgeNotFoundException;
@@ -14,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -24,15 +39,23 @@ public class HueBridge {
     private String user;
     private int transitionTime;
 
-    public HueBridge(String ip, String user, int transitionTime) throws HueException {
+    private RequestQueue requestQueue;
+
+    public HueBridge(String ip, String user, int transitionTime, Context context) throws HueException {
         this.ip = ip;
         this.user = user;
         this.transitionTime = transitionTime;
+
+        // Instantiate the RequestQueue with the cache and network.
+        requestQueue = Volley.newRequestQueue(context);
+        // Start the queue
+        requestQueue.start();
+
         discoverLights();
     }
 
-    public HueBridge(String ip, String user) throws HueException {
-        this(ip, user, 10);
+    public HueBridge(String ip, String user, Context context) throws HueException {
+        this(ip, user, 10, context);
     }
 
 
@@ -56,103 +79,75 @@ public class HueBridge {
      * @param subURL      this is the subURL that the command should use eg. /lights/1
      * @throws IOException throws IOException when something went wrong with the connection
      */
-    void putCommand(final String jsonCommand, final String subURL) throws IOException {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL("http://" + ip + "/api/" + user + subURL);
-//                    System.out.println(url.toString());
-                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                    httpCon.setDoOutput(true);
-                    httpCon.setRequestMethod("PUT");
-                    OutputStream os = httpCon.getOutputStream();
-                    OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-                    osw.write(jsonCommand);
-                    osw.flush();
-                    osw.close();
-                    os.close();
-//                    System.out.println(jsonCommand);
-                    httpCon.connect();
+    void putCommand(final String jsonCommand, String subURL) throws IOException {
+        String url = "http://" + ip + "/api/" + user + subURL;
 
-                    //get result
-                    String result = readResult(httpCon);
-//                    System.out.println(result);
-                    httpCon.disconnect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        StringRequest request = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
             }
-        });
-        thread.start();
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("HTTP ERROR!", Arrays.toString(error.getStackTrace()));
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return jsonCommand.getBytes(StandardCharsets.UTF_8);
+            }
+        };
+
+        requestQueue.add(request);
+
     }
 
     /**
      * Discovers lights in this Hue
-     *
      */
     private void discoverLights() {
         //Create the Http connection
-        Thread thread = new Thread(new Runnable() {
+        String url = "http://" + ip + "/api/" + user + "/lights";
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
-            public void run() {
+            public void onResponse(String response) {
                 try {
-                    URL url = new URL("http://" + ip + "/api/" + user + "/lights");
-                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                    httpCon.setDoOutput(false);
-                    httpCon.setRequestMethod("GET");
+                    JSONObject object = new JSONObject(response);
 
-                    //get result
-                    String result = readResult(httpCon);
-                    try {
-                        JSONObject object = new JSONObject(result);
-
-                        //Start reading the lights
-                        Iterator<String> keys = object.keys();
-                        while (keys.hasNext()) {
-                            String key = keys.next();
-                            if (object.get(key) instanceof JSONObject) {
-                                JSONObject lightObject = (JSONObject) object.get(key);
-                                lights.add(new HueLight(Integer.parseInt(key), transitionTime, HueBridge.this, lightObject.getString("name")));
-                            }
+                    //Start reading the lights
+                    Iterator<String> keys = object.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        if (object.get(key) instanceof JSONObject) {
+                            JSONObject lightObject = (JSONObject) object.get(key);
+                            lights.add(new HueLight(Integer.parseInt(key), transitionTime, HueBridge.this, Integer.parseInt(key)));
                         }
-
-                        //Sort the lights by name
-                        Collections.sort(lights, new LightComparator());
-                        Log.i("HueBridge", "Created bridge with lights: " + lights);
-                    } catch (JSONException e) {
-                        throw new HueException("Lights JSON could not be read!");
                     }
-                    httpCon.disconnect();
-                } catch (IOException | HueException e) {
-                    e.printStackTrace();
+
+                    //Sort the lights by name
+                    Collections.sort(lights, new LightComparator());
+                    Log.i("HueBridge", "Created bridge with lights: " + lights);
+                } catch (JSONException e) {
+                    Log.e("Response Error", "Lights JSON could not be read!");
                 }
             }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("HTTP ERROR!", Arrays.toString(error.getStackTrace()));
+            }
         });
-        thread.start();
 
+        requestQueue.add(request);
     }
 
-
-    /**
-     * Reads a result from a HttpUrlConnection
-     *
-     * @param httpCon the opened HttpURLConnection
-     * @return the result string
-     * @throws IOException when reading went wrong
-     */
-    private String readResult(HttpURLConnection httpCon) throws IOException {
-        String result;
-        BufferedInputStream bis = new BufferedInputStream(httpCon.getInputStream());
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        int result2 = bis.read();
-        while (result2 != -1) {
-            buf.write((byte) result2);
-            result2 = bis.read();
-        }
-        result = buf.toString();
-        return result;
-    }
 
 
 }

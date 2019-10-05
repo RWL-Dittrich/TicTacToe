@@ -7,6 +7,6 @@ import java.util.Comparator;
 public class LightComparator implements Comparator<HueLight> {
     @Override
     public int compare(HueLight o1, HueLight o2) {
-        return o1.getName().compareTo(o2.getName());
+        return o1.getId() - o2.getId();
     }
 }

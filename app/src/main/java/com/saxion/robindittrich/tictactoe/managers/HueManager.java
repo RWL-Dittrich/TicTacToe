@@ -11,11 +11,6 @@ import nl.mesoplz.hue.models.HueBridge;
 public class HueManager {
     public static HueBridge bridge;
 
-
-    static {
-
-    }
-
     public static void init(Context context) {
         //Get the shared preferences (app storage)
         SharedPreferences pref = context.getSharedPreferences("Settings", 0);
@@ -25,7 +20,7 @@ public class HueManager {
         String user = pref.getString("user", "Hue user string");
         try {
             //Instantiate a Bridge with these variables
-            bridge = new HueBridge(ip, user);
+            bridge = new HueBridge(ip, user, context);
         } catch (HueException e) {
             e.printStackTrace();
         }
