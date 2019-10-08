@@ -24,7 +24,9 @@ public class LampListAdapter extends RecyclerView.Adapter<LampListAdapter.ViewHo
     // binds the data to the view and textview in each row
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.idTextView.setText(String.valueOf(HueManager.bridge.getLights().get(position).getId()));
+        holder.idTextView.setText("id: " + String.valueOf(HueManager.bridge.getLights().get(position).getId()));
+        holder.nameTextView.setText("Name: " + HueManager.bridge.getLights().get(position).getName());
+
     }
 
     // inflates the row layout from xml when needed
@@ -44,10 +46,13 @@ public class LampListAdapter extends RecyclerView.Adapter<LampListAdapter.ViewHo
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView idTextView;
+        TextView nameTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
             idTextView = itemView.findViewById(R.id.tvID);
+            nameTextView = itemView.findViewById(R.id.tvName);
+
             itemView.setOnClickListener(this);
         }
 

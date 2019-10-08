@@ -11,12 +11,14 @@ public class HueLight {
     private int transitionTime;
 
     private int id;
+    private String name;
 
-    HueLight(int lightID, int transitionTime ,HueBridge bridge, int name) {
+    HueLight(int lightID, int transitionTime ,HueBridge bridge, int id, String name) {
         this.lightID = lightID;
         this.bridge = bridge;
         this.transitionTime = transitionTime;
-        this.id = name;
+        this.id = id;
+        this.name = name;
     }
 
 
@@ -107,8 +109,12 @@ public class HueLight {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
-        return Integer.toString(id);
+        return "id:" + id + " name: " + name;
     }
 }

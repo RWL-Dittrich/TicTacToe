@@ -127,7 +127,7 @@ public class HueBridge {
                         String key = keys.next();
                         if (object.get(key) instanceof JSONObject) {
                             JSONObject lightObject = (JSONObject) object.get(key);
-                            lights.add(new HueLight(Integer.parseInt(key), transitionTime, HueBridge.this, Integer.parseInt(key)));
+                            lights.add(new HueLight(Integer.parseInt(key), transitionTime, HueBridge.this, Integer.parseInt(key), lightObject.getString("name")));
                         }
                     }
 

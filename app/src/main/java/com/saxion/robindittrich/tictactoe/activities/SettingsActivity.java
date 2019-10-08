@@ -56,9 +56,9 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            bridge.getLights().get(position).setBri(0);
-                            Thread.sleep(500);
-                            bridge.getLights().get(position).setBri(254);
+                            bridge.getLights().get(position).setPower(false);
+                            Thread.sleep(1000);
+                            bridge.getLights().get(position).setPower(true);
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
