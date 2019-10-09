@@ -30,31 +30,30 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void setRed(View view) {
-        for (HueLight light : bridge.getLights()) {
+    public void lightsOn(View view) {
+        for (HueLight l : bridge.getLights()) {
             try {
-                light.setRGB(255, 0,0);
+                l.setPower(true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    public void setGreen(View view) {
-        for (HueLight light : bridge.getLights()) {
+
+    public void lightsOff(View view) {
+        for (HueLight l : bridge.getLights()) {
             try {
-                light.setRGB(0, 255,0);
+                l.setPower(false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    public void setBlue(View view) {
-        for (HueLight light : bridge.getLights()) {
-            try {
-                light.setRGB(0, 0,255);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+    public void logOutput(View view) {
+        System.out.println(view.getId());
+        switch(view.getId()) {
+
         }
     }
 }

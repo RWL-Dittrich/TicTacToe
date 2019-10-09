@@ -4,4 +4,7 @@
     <string name="main_button_start">Start game!</string>
     <string name="settings_textview_title">Settings</string>
     <string name="settings_button_save">Save</string>
+    <string name="lights_on">Lights on</string>
+    <string name="lights_off">Lights off</string>
+    <string name="lights_grid">Enter light id\'s in this grid</string>
 </resources>
