@@ -39,7 +39,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/btSaveButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/n1x2">
+                app:layout_constraintTop_toBottomOf="@+id/n7">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -78,7 +78,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/ivUserInput" />
 
             <EditText
-                android:id="@+id/n2x0"
+                android:id="@+id/n2"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -89,7 +89,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <EditText
-                android:id="@+id/n2x1"
+                android:id="@+id/n5"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -97,10 +97,10 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/n2x0" />
+                app:layout_constraintTop_toBottomOf="@+id/n2" />
 
             <EditText
-                android:id="@+id/n2x2"
+                android:id="@+id/n8"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -108,10 +108,10 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/n2x1" />
+                app:layout_constraintTop_toBottomOf="@+id/n5" />
 
             <EditText
-                android:id="@+id/n1x1"
+                android:id="@+id/n4"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -119,12 +119,12 @@
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:inputType="number"
-                app:layout_constraintEnd_toStartOf="@+id/n2x1"
-                app:layout_constraintStart_toEndOf="@+id/n0x1"
-                app:layout_constraintTop_toBottomOf="@+id/n1x0" />
+                app:layout_constraintEnd_toStartOf="@+id/n5"
+                app:layout_constraintStart_toEndOf="@+id/n3"
+                app:layout_constraintTop_toBottomOf="@+id/n1" />
 
             <EditText
-                android:id="@+id/n0x0"
+                android:id="@+id/n0"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -135,7 +135,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <EditText
-                android:id="@+id/n0x1"
+                android:id="@+id/n3"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -143,10 +143,10 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/n0x0" />
+                app:layout_constraintTop_toBottomOf="@+id/n0" />
 
             <EditText
-                android:id="@+id/n0x2"
+                android:id="@+id/n6"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -154,10 +154,10 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/n0x1" />
+                app:layout_constraintTop_toBottomOf="@+id/n3" />
 
             <EditText
-                android:id="@+id/n1x2"
+                android:id="@+id/n7"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -165,12 +165,12 @@
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:inputType="number"
-                app:layout_constraintEnd_toStartOf="@+id/n2x2"
-                app:layout_constraintStart_toEndOf="@+id/n0x2"
-                app:layout_constraintTop_toBottomOf="@+id/n1x1" />
+                app:layout_constraintEnd_toStartOf="@+id/n8"
+                app:layout_constraintStart_toEndOf="@+id/n6"
+                app:layout_constraintTop_toBottomOf="@+id/n4" />
 
             <EditText
-                android:id="@+id/n1x0"
+                android:id="@+id/n1"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -178,8 +178,8 @@
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:inputType="number"
-                app:layout_constraintEnd_toStartOf="@+id/n2x0"
-                app:layout_constraintStart_toEndOf="@+id/n0x0"
+                app:layout_constraintEnd_toStartOf="@+id/n2"
+                app:layout_constraintStart_toEndOf="@+id/n0"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <Button

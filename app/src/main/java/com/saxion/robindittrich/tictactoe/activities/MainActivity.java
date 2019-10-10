@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.saxion.robindittrich.tictactoe.R;
+import com.saxion.robindittrich.tictactoe.game.Game;
 
 import java.io.IOException;
 
@@ -50,10 +51,49 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void logOutput(View view) {
-        System.out.println(view.getId());
-        switch(view.getId()) {
+    public void flashy(View view) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int countX = 0, countY = 0;
 
-        }
+                for (int i = 0; i < 3 * 3; i++) {
+                    if (countX == 3) {
+                        countY++;
+                        countX = 0;
+                    }
+                    try {
+                        Game.lights[countX][countY].setPower(false);
+                        Thread.sleep(300);
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    countX++;
+                }
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                countX = 0;
+                countY = 0;
+                for (int i = 0; i < 3 * 3; i++) {
+                    if (countX == 3) {
+                        countY++;
+                        countX = 0;
+                    }
+                    try {
+                        Game.lights[countX][countY].setPower(true);
+                        Thread.sleep(150);
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    countX++;
+                }
+            }
+
+        });
+        t.start();
     }
 }
