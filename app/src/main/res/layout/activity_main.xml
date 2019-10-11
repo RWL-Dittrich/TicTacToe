@@ -68,10 +68,11 @@
         android:id="@+id/imageView"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:src="@drawable/tictacowo"
         app:layout_constraintBottom_toTopOf="@+id/button4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:srcCompat="@drawable/tictactoe" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
