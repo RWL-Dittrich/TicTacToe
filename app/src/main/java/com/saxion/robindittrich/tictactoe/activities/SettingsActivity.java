@@ -155,20 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
         countX = 0;
         countY = 0;
 
-        //Then fill the game's HueLight[][]
-        for (int i = 0; i < 3*3; i++) {
-            if (countX == 3) {
-                countY++;
-                countX = 0;
-            }
-            int lightId = HueManager.lightIds[countX][countY];
-            for (HueLight l : bridge.getLights()) {
-                if (l.getId() == lightId) {
-                    Game.lights[countX][countY] = l;
-                }
-            }
-            countX++;
-        }
+        Game.instantiateLights();
 
         System.out.println(Arrays.deepToString(HueManager.lightIds));
 

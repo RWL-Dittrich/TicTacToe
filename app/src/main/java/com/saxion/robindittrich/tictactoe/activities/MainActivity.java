@@ -51,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startGame(View view){
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+
+    }
+
     public void flashy(View view) {
         Thread t = new Thread(new Runnable() {
             @Override

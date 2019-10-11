@@ -49,7 +49,7 @@ public class HueLight {
         Color.RGBToHSV(r, g, b, HSB);
         int H = (int) (HSB[0] / 360f * 65535f);
         int S = (int) (HSB[1] * 254f);
-        int B = (int) (HSB[2] * 254f);
+        int B = Math.max(r, Math.max(b, g));
         bridge.putCommand("{\"hue\": " + H + ",\"sat\": " + S + ", \"bri\": " + B + ",\"transitiontime\": " + transitionTime + "}","/lights/" + lightID + "/state");
 
     }

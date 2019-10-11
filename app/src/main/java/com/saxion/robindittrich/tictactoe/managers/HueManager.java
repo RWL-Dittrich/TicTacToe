@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.widget.EditText;
 
 import com.saxion.robindittrich.tictactoe.activities.MainActivity;
+import com.saxion.robindittrich.tictactoe.game.Game;
 
 import nl.mesoplz.hue.exceptions.HueException;
 import nl.mesoplz.hue.models.HueBridge;

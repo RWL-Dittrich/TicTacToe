@@ -15,6 +15,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.saxion.robindittrich.tictactoe.game.Game;
 
 import nl.mesoplz.hue.compare.LightComparator;
 import nl.mesoplz.hue.exceptions.BridgeNotFoundException;
@@ -133,6 +134,8 @@ public class HueBridge {
 
                     //Sort the lights by name
                     Collections.sort(lights, new LightComparator());
+                    Game.instantiateLights();
+
                     Log.i("HueBridge", "Created bridge with lights: " + lights);
                 } catch (JSONException e) {
                     Log.e("Response Error", "Lights JSON could not be read!");
