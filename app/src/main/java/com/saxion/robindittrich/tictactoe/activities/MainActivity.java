@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     try {
                         Game.lights[countX][countY].setPower(true);
-                        Thread.sleep(150);
+                        Thread.sleep(300);
                     } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
                     }

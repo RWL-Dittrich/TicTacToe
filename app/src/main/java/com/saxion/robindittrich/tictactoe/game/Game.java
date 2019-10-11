@@ -130,7 +130,24 @@ public class Game {
                 return "B";
             }
         }
-        if (!Arrays.asList(board).toString().contains("0")) {
+        boolean gameDraw = true;
+
+        int countX = 0, countY = 0;
+
+        //reference all the number inputs for the lightid's and put the value
+        for (int i = 0; i < 3*3; i++) {
+            if (countX == 3) {
+                countY++;
+                countX = 0;
+            }
+            if (board[countX][countY] == '0') {
+                gameDraw = false;
+                break;
+            }
+            countX++;
+        }
+
+        if (gameDraw) {
             return "D";
         }
 

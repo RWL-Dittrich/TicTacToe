@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.saxion.robindittrich.tictactoe.R;
 import com.saxion.robindittrich.tictactoe.game.Game;
@@ -46,10 +47,32 @@ public class GameActivity extends AppCompatActivity {
         int x = Integer.parseInt(xy[0]);
         int y = Integer.parseInt(xy[1]);
 
-        game.nextTurn(x, y);
+        int result = game.nextTurn(x, y);
+        switch(result) {
+            case 1:
+                //red won
+                Toast.makeText(this, "Red won!", Toast.LENGTH_LONG).show();
+                disableButtons();
+                break;
+            case 2:
+                //blue won
+                Toast.makeText(this, "Blue won!", Toast.LENGTH_LONG).show();
+                disableButtons();
+                break;
+            case 3:
+                //draw
+                Toast.makeText(this, "Draw!", Toast.LENGTH_LONG).show();
+                disableButtons();
+                break;
+        }
         view.setEnabled(false);
     }
 
+    private void disableButtons() {
+        for (Button b : buttons) {
+            b.setEnabled(false);
+        }
+    }
 
     public void resetGame(View view) {
         game.resetBoard();
