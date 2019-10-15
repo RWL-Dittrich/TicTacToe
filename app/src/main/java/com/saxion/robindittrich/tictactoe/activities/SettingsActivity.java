@@ -171,6 +171,10 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     private boolean checkLightId(int id) {
+        if(id < 1) {
+            //Default values!
+            return true;
+        }
         for (HueLight light : bridge.getLights()) {
             if (light.getId() == id) {
                 return true;
